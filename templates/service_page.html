@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <h1>Upload new photo</h1>
+            <form method="post" enctype="multipart/form-data" class="form-horizontal mt-4">
+                {% csrf_token %}
+                {{ form.0.as_p }}
+                <input type="submit" value="Upload" class="btn btn-primary">
+            </form>
+            {% if files %}
+            <div class="row mt-5">
+                {% for file in files %}
+                <div class="col-md-4">
+                    <p>Photo before</p>
+                    <img src="{{ file.file.url }}" class="img-fluid">
+                </div>
+                {% endfor %}
+            </div>
+
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <h1>Choose document type</h1>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.1.as_p }}
+                <input type=" submit" value="Prepare photo" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

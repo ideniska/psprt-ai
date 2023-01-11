@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-5">
+    <a class="navbar-brand" href="#">Passport Photo AI (beta)</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+            <!-- <li class="nav-item active">
+                <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a> -->
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'upload' %}">Try it for free</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h1 class="text-center" style="margin: 0% 15% 5% 15%;">Create a professional passport photo online with a single
+        click in just one second</h1>
+    <p class="lead text-center" style="margin: 0% 15% 5% 15%;">
+        🔮 Our sofisticated AI can edit your selfie photos to meet the specific size and background requirements of
+        your country's passport or visa application.
+        So you can focus on other aspects of your trip. </p>
+    <div class="row" style="margin: 0% 15% 5% 15%;">
+        <!-- <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Background removal</h5>
+                <p>Background cutout in superb quality with smooth edges, colors with fidelity, and stunning details
+                    such as hair and small holes. Release yourself from heavy workflow. Don’t waste two hours on
+                    producing a passport photo when you can do it with one click. </p>
+            </div>
+        </div> -->
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <strong class="d-inline-block mb-2 text-primary">Background removal</strong>
+                <p class="card-text mb-auto">Background cutout in superb quality with smooth edges, colors with
+                    fidelity, and stunning details
+                    such as hair and small holes. Release yourself from heavy workflow. Don’t waste two hours on
+                    producing a passport photo when you can do it with one click.</p>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+                <img src="{% static 'img/example1.png' %}" alt="">
+            </div>
+        </div>
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <strong class="d-inline-block mb-2 text-primary">Auto image adjustments</strong>
+                <p class="card-text mb-auto">Portrait will be automatically resized, cropped and converted to perfect
+                    size with face centered.
+                    Official photo sizes for ID, Passport, visa and license of various countries including USA,
+                    Canada, China and countries from the European union: 2’’x2’’, 3’’x4’’, 4’’x4’’, 4’’x6’’,
+                    5’’x6’’,
+                    etc.</p>
+                <a href="{% url 'upload' %}" class="btn btn-primary">Try it for free</a>
+            </div>
+            <br>
+            <div class="col-auto d-none d-lg-block">
+                <img src="{% static 'img/example2.png' %}" width="300" height="auto" alt="">
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
