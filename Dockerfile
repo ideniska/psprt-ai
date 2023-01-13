@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR $HOME
 
-RUN apt-get -qq install cmake
+RUN apt-get update && apt-get -y install cmake protobuf-compiler
 RUN pip install --upgrade pip poetry
 
 COPY ["pyproject.toml", "poetry.lock", "$HOME/"]
