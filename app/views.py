@@ -55,6 +55,7 @@ class ChooseView(View):
     template_name = "choose.html"
     form_class = DocumentTypeForm
 
+    # TODO Move business logic to services
     def get(self, request):
         session_key = self.request.session.session_key
         form = self.form_class()
