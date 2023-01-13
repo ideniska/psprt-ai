@@ -157,3 +157,5 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "https://pa.dendev.ca",
 ]
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
