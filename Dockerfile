@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR $HOME
 
+RUN apt-get -qq install cmake
 RUN pip install --upgrade pip poetry
 
 COPY ["pyproject.toml", "poetry.lock", "$HOME/"]
