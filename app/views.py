@@ -97,56 +97,51 @@ class PrepareView(TemplateView):
     def get_context_data(self, **kwargs):
         session_key = self.request.session.session_key
         context = super().get_context_data(**kwargs)
-        # image = File.objects.filter(session=session_key).latest("uploaded_at")
+
         prepared_images = UserFile.objects.filter(session=session_key).filter(
             edited=True
         )
         context["prepared_images"] = prepared_images
-        prepared_for = prepared_images.first().get_prepared_for_display()
-        context["prepared_for"] = prepared_for
-        size_requirements_for_display = {
+        context["size"] = {
             "australia_passport": {
-                "size": (413, 531),
-                "head": 55,
+                "size": "413 x 531",
+                "display_name": "Australia Passport",
             },
             "china_visa": {
-                "size": (600, 600),
-                "head": 55,
+                "size": "600 x600",
+                "display_name": "China Visa",
             },
             "european_union_passport": {
-                "size": (413, 531),
-                "head": 55,
+                "size": "413 x 531",
+                "display_name": "European Union Passport",
             },
             "schengen_visa": {
-                "size": (413, 531),
-                "head": 55,
+                "size": "413 x 531",
+                "display_name": "Schengen Visa",
             },
             "us_passport": {
-                "size": (600, 600),
-                "head": 55,
+                "size": "600 x 600",
+                "display_name": "US Passport",
             },
             "india_visa": {
-                "size": (600, 600),
-                "head": 55,
+                "size": "600 x 600",
+                "display_name": "India Visa",
             },
             "japan_visa": {
-                "size": (531, 531),
-                "head": 55,
+                "size": "531 x 531",
+                "display_name": "Japan Visa",
             },
             "us_visa": {
-                "size": (600, 600),
-                "head": 55,
+                "size": "600 x 600",
+                "display_name": "US Visa",
             },
             "canada_visa": {
-                "size": (413, 531),
-                "head": 55,
+                "size": "413 x 531",
+                "display_name": "Canada Visa",
             },
             "canada_passport": {
-                "size": (590, 826),
-                "head": 55,
+                "size": "590 x 826",
+                "display_name": "Canada Passport",
             },
         }
-        context["size"] = size_requirements_for_display[
-            prepared_images.first().prepared_for
-        ]["size"]
         return context

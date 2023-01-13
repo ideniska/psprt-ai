@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  web:
+    image: ideniska/passport_ai
+    build: 
+      context: . 
+      dockerfile: Dockerfile
+    container_name: passport_ai
+    restart: always
+    volumes:
+      - static_data:/app/static
+      - media_data:/app/media
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    container_name: passport_ai_db
+    restart: always
+    volumes:
+     - passport_ai_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env.dev
+
+  nginx:
+    image: nginx:1.19.8-alpine
+    container_name: passport_ai_nginx
+    restart: always
+    ports:
+      - 8000:80
+    volumes:
+      - static_data:/static
+      - media_data:/media
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - web
+
+volumes:
+  passport_ai_postgres_data:
+  static_data:
+  media_data:
+
+networks:
+  queue_network:
+    driver: bridge

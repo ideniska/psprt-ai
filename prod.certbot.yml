@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: staticfloat/nginx-certbot
+    network_mode: host
+    container_name: nginx
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - ./nginx/certbot.conf:/etc/nginx/user.conf.d/nginx_template.conf:ro
+      - ./nginx/conf.d/proxy.conf:/etc/nginx/user.conf.d/proxy.conf:ro
+    ports:
+      - "443:443"
+      - "80:80"
+    environment:
+      CERTBOT_EMAIL: idenisk@gmail.com
+      # variable names are space-separated
+      ENVSUBST_VARS: APP
+      APP: pa.dendev.ca
+  
+volumes:
+  letsencrypt:
