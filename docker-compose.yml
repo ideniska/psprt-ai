@@ -30,7 +30,7 @@ services:
     container_name: passport_ai_nginx
     restart: always
     ports:
-      - 8000:80
+      - 9000:80
     volumes:
       - static_data:/static
       - media_data:/media

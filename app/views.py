@@ -34,7 +34,7 @@ class UploadView(FormView):
         session_key = self.request.session.session_key
 
         # Delete old files assosiated with this session
-        if UserFile.objects.all():
+        if UserFile.objects.filter(session=session_key).exists():
             UserFile.objects.filter(session=session_key).delete()
 
         # user_file = File(
