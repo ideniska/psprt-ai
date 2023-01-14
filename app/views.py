@@ -1,20 +1,12 @@
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView
 from django.views.generic import FormView
 from django.views import View
-from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import EmailAuthenticationForm, DocumentTypeForm, FileForm
+from .forms import DocumentTypeForm, FileForm
 from .models import UserFile
-from users.models import CustomUser
 from faker import Faker
-from django.views.generic.edit import CreateView
-from django.urls import reverse_lazy
-from django.views.generic.detail import DetailView
 from .service import PhotoPreparation
-from rembg import remove
-from PIL import Image
-from django.shortcuts import get_object_or_404
 
 
 fake_data = Faker()
@@ -36,11 +28,6 @@ class UploadView(FormView):
         # Delete old files assosiated with this session
         if UserFile.objects.filter(session=session_key).exists():
             UserFile.objects.filter(session=session_key).delete()
-
-        # user_file = File(
-        #     file=self.get_form_kwargs().get("files")["file"], session=session_key
-        # )
-        # user_file.save()
 
         files = self.request.FILES.getlist("file")
         for f in files:
@@ -82,12 +69,8 @@ class ChooseView(View):
                     photo_size, file_path, file_name, session_key, uploaded_file.id
                 )
                 service.make()
-            # context = {"choice": photo_size}
             return redirect("/prepare/")
         else:
-            # uploaded_files = File.objects.filter(session=session_key).latest(
-            #     "uploaded_at"
-            # )
             context = {"form": form, "uploaded_files": uploaded_files}
             return render(request, self.template_name, context)
 
