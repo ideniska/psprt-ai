@@ -2,7 +2,6 @@ import os
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.core.validators import FileExtensionValidator
-from users.models import CustomUser
 
 
 DOCUMENT_TYPE_CHOICES = [

@@ -6,10 +6,10 @@ from .managers import UserManager
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
-UserType = TypeVar("UserType", bound="CustomUser")
+UserType = TypeVar("UserType", bound="User")
 
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     # username = None  # type: ignore
     email = models.EmailField("Email address", unique=True)
     is_demo = models.BooleanField(default=False)
