@@ -62,11 +62,15 @@ class ChooseView(View):
             for uploaded_file in uploaded_files:
                 file_path = uploaded_file.file.path
                 file_name = uploaded_file.file.name
-                photo_size = form.cleaned_data["document_type"]
-                uploaded_file.prepared_for = photo_size
+                photo_size_country = form.cleaned_data["document_type"]
+                uploaded_file.prepared_for = photo_size_country
                 uploaded_file.save()
                 service = PhotoPreparation(
-                    photo_size, file_path, file_name, session_key, uploaded_file.id
+                    photo_size_country,
+                    file_path,
+                    file_name,
+                    session_key,
+                    uploaded_file.id,
                 )
                 service.make()
             return redirect("/prepare/")
