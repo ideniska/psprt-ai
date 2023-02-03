@@ -150,13 +150,13 @@ CORS_ALLOWED_HOSTS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "http://127.0.0.1",
-    "https://pa.dendev.ca",
+    "https://getvisa.photos",
 ]
 
 # CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
-    "https://pa.dendev.ca",
+    "https://getvisa.photos",
 ]
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
