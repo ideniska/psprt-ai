@@ -7,6 +7,9 @@ from .forms import DocumentTypeForm, FileForm
 from .models import UserFile
 from faker import Faker
 from .service import PhotoPreparation
+import json
+from django.http import JsonResponse
+from app.task import process_photos
 
 
 fake_data = Faker()
@@ -73,10 +76,34 @@ class ChooseView(View):
                     uploaded_file.id,
                 )
                 service.make()
+                # task = process_photos.apply_async(
+                #     args=(
+                #         photo_size_country,
+                #         file_path,
+                #         file_name,
+                #         session_key,
+                #         uploaded_file.id,
+                #     )
+                # )
             return redirect("/prepare/")
+            # return JsonResponse({"task_id": task.id})
         else:
             context = {"form": form, "uploaded_files": uploaded_files}
             return render(request, self.template_name, context)
+
+
+def task_status(request, task_id):
+    task = process_photos.AsyncResult(task_id)
+    if task.state == "PENDING":
+        response = {"state": task.state, "status": "Pending..."}
+    elif task.state != "FAILURE":
+        response = {"state": task.state, "status": task.info.get("status", "")}
+    else:
+        response = {
+            "state": task.state,
+            "status": str(task.info),
+        }
+    return JsonResponse(response)
 
 
 class PrepareView(TemplateView):

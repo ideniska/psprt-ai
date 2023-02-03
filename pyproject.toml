@@ -16,6 +16,8 @@ dlib = "^19.24.0"
 Pillow = "~=9.3"
 rembg = "2.0.30"
 Django = "4.1"
+celery = "^5.2.7"
+rabbitmq = "^0.2.0"
 
 
 
