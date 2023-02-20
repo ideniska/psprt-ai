@@ -49,17 +49,6 @@ services:
     depends_on:
       - db
 
-  # rabbitmq:
-  #   image: rabbitmq:alpine
-  #   volumes:
-  #     - rabbitmq:/var/lib/rabbitmq
-  #   restart: always
-  #   healthcheck:
-  #     test: rabbitmq-diagnostics -q status
-  #     interval: 10s
-  #     timeout: 30s
-  #     retries: 3
-
   redis:
     image: redis:7.0.8-alpine
     restart: always
