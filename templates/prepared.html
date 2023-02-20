@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static dict_lookup %}
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col" style="max-width: 300px">
+      <a href="{% url 'upload' %}" class="btn btn-warning">Choose another photo</a>
+    </div>
+    <div class="col" style="max-width: 300px">
+      <a href="{% url 'choose' %}" class="btn btn-info">Choose a different document</a>
+    </div>
+  </div>
+
+  <br />
+  <h1>Your photo is ready for download</h1>
+  <div class="row mt-5">
+    {% for file in prepared_images%}
+    <div class="col" style="max-width: 300px">
+      <div class="container">
+        <p>Prepared for: {{size|get_display_name:file.prepared_for}}</p>
+        <p>Size: {{size|get_size:file.prepared_for}}</p>
+        <p>Resolution (dpi): 300</p>
+        <img src="{{ file.file.url }}" class="img-fluid" width="200" />
+      </div>
+      <!-- <a href="{{ file.file.url }}" class="btn btn-success" download=""
+        style="max-width: 150px; margin-top: 20px">Continue to Download</a> -->
+      <button id="start-payment-button" class="btn btn-success" style="max-width: 150px; margin-top: 20px">Continue to
+        Download</button>
+
+      <div id="stripe-form" style="display: none">
+        <br>
+        <!-- Display a payment form -->
+        <form id="payment-form">
+          <div id="link-authentication-element">
+            <!--Stripe.js injects the Link Authentication Element-->
+          </div>
+          <div id="payment-element">
+            <!--Stripe.js injects the Payment Element-->
+          </div>
+          <button id="submit">
+            <div class="spinner hidden" id="spinner"></div>
+            <span id="button-text">Pay now</span>
+          </button>
+          <div id="payment-message" class="hidden"></div>
+        </form>
+      </div>
+    </div>
+
+    {% endfor%}
+  </div>
+</div>
+
+{% endblock %}
+{% block javascript %}
+<script src="https://js.stripe.com/v3/"></script>
+<script src="{% static 'js/prepared.js' %}"></script>
+{% endblock %}

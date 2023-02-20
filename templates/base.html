@@ -29,6 +29,9 @@
       crossorigin="anonymous"
     />
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+    {% block header %}{% endblock %}
     <title>Passport Photo AI</title>
   </head>
 
@@ -40,5 +43,6 @@
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
       crossorigin="anonymous"
     ></script>
+    {% block javascript %}{% endblock %}
   </body>
 </html>

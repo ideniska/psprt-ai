@@ -1,4 +1,7 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
+<div id="loading" style="display: none">
+  <img src="{% static 'img/loading.gif' %}" alt="Loading..." />
+</div>
 <div class="container mt-5">
   <h1>Step 2 of 2: Choose document type</h1>
   <div class="row mt-5">
@@ -57,15 +60,16 @@
     {% endif %}
     <div class="col-md-5">
       <div class="container">
-        <form method="post">
+        <form id="document-type-form">
           {% csrf_token %} {{ form.as_p }}
-          <div id="loading-animation" style="display: none">
-            <img src="loading.gif" alt="Loading..." />
-          </div>
+
           <button type="submit" id="submit-button" class="btn btn-primary">
             Prepare photo
           </button>
         </form>
+        <div id="loading-animation" style="display: none">
+          <img src="{% static 'img/loading.gif' %}" alt="Loading..." />
+        </div>
       </div>
     </div>
   </div>
@@ -89,22 +93,21 @@
 
 {% comment %}
 <script>
-  document
-    .getElementById("submit-button")
-    .addEventListener("click", function () {
-      document.getElementById("loading-animation").style.display = "block";
-    });
-
-  var source = new EventSource("/status/");
-  source.onmessage = function (e) {
-    var data = JSON.parse(e.data);
-    if (data.status === "completed") {
-      document.getElementById("loading-animation").style.display = "none";
-      alert(
-        "Task completed! You will now be redirected to the preparation page."
-      );
-      window.location.href = "/prepare/";
+  document.addEventListener("DOMContentLoaded", function () {
+    var taskId = "{{ task_id }}";
+    if (taskId) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/celery-progress/" + taskId + "/");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          window.location.href = "/prepare";
+        }
+      };
+      xhr.send();
     }
-  };
+  });
 </script>
-{% endcomment %} {% endblock %}
+{% endcomment %}
+
+<script src="{% static 'js/websocket.js' %}"></script>
+{% endblock %}

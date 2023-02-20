@@ -1,11 +1,14 @@
 from rembg import remove
 from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
 from .models import UserFile
 from django.core.files import File
 from django.core.files.storage import default_storage
 import cv2
 import os
 from pathlib import Path
+from django.conf import settings
 
 
 class PhotoPreparation:
@@ -61,12 +64,12 @@ class PhotoPreparation:
         self.filename, self.file_extension = os.path.splitext(
             os.path.basename(self.input_path)
         )
-        # self.output_path = f"{dir_path}/{self.filename}_cropped{self.file_extension}"
-        self.output_path = default_storage.path(
+        self.clean_output_path = default_storage.path(
             "edited/{}_edited{}".format(self.filename, self.file_extension)
         )
-        # self.output_path = f"/media/edited/{filename}{file_extension}"
-        # self.output_path = file_path
+        self.watermarked_output_path = default_storage.path(
+            "watermarked/{}_watermarked{}".format(self.filename, self.file_extension)
+        )
 
     def make(self):
         image = cv2.imread(self.input_path)
@@ -128,16 +131,62 @@ class PhotoPreparation:
             "RGB", (ideal_width, ideal_height), (255, 255, 255)
         )
         on_white_background.paste(output, output)
-        on_white_background.save(self.output_path)
+        on_white_background.save(self.clean_output_path)
 
-        # Add new edited image to UserFile model with the status EDITED
-        edited_file_name = os.path.basename(self.output_path)
-        edited_file_object = File(open(self.output_path, "rb"), name=edited_file_name)
+        ### Watermaked version ###
+        watermark_image = on_white_background.copy()
+        draw = ImageDraw.Draw(watermark_image)
+        w, h = watermark_image.size
+        x, y = int(w / 2), int(h / 2)
+        if x > y:
+            font_size = y
+        elif y > x:
+            font_size = x
+        else:
+            font_size = x
 
-        new_user_file_obj = UserFile(
-            file=edited_file_object,
+        font_path = os.path.join(
+            settings.BASE_DIR, "app/static/fonts/Ubuntu-Medium.ttf"
+        )
+        font = ImageFont.truetype(font_path, int(font_size / 4))
+
+        # add Watermark
+        # (0,0,0)-black color text
+        draw.text((x, y), "getvisa.photo", fill=(128, 128, 128), font=font, anchor="ms")
+        draw.text(
+            (x, y / 2), "getvisa.photo", fill=(128, 128, 128), font=font, anchor="ms"
+        )
+        draw.text(
+            (x, y * 1.5), "getvisa.photo", fill=(128, 128, 128), font=font, anchor="ms"
+        )
+        watermark_image.save(self.watermarked_output_path)
+
+        # Add watermarked image to UserFile model
+        watermarked_file_name = os.path.basename(self.watermarked_output_path)
+        watermarked_file_object = File(
+            open(self.watermarked_output_path, "rb"), name=watermarked_file_name
+        )
+
+        new_watermarked_file_object = UserFile(
+            file=watermarked_file_object,
             session=self.session_key,
             edited=True,
             prepared_for=self.prepared_for,
+            watermarked=True,
         )
-        new_user_file_obj.save()
+        new_watermarked_file_object.save()
+
+        # Add clean (no watermark) image to UserFile model
+        clean_file_name = os.path.basename(self.clean_output_path)
+        clean_file_object = File(
+            open(self.clean_output_path, "rb"), name=clean_file_name
+        )
+
+        new_clean_file_object = UserFile(
+            file=clean_file_object,
+            session=self.session_key,
+            edited=True,
+            prepared_for=self.prepared_for,
+            watermarked=False,
+        )
+        new_clean_file_object.save()

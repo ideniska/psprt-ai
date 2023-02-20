@@ -1,12 +1,9 @@
-version: '3.9'
-
 services:
   web:
     image: ideniska/passport_ai
-    build: 
-      context: . 
+    build:
+      context: .
       dockerfile: Dockerfile
-    container_name: passport_ai
     restart: always
     volumes:
       - static_data:/app/static
@@ -18,19 +15,18 @@ services:
 
   db:
     image: postgres:14
-    container_name: passport_ai_db
+    container_name: passort-ai-db
     restart: always
     volumes:
-     - passport_ai_postgres_data:/var/lib/postgresql/data
+      - passport_ai_postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.env.dev
 
   nginx:
     image: nginx:1.19.8-alpine
-    container_name: passport_ai_nginx
     restart: always
     ports:
-      - 9000:80
+      - 8000:80
     volumes:
       - static_data:/static
       - media_data:/media
@@ -38,11 +34,43 @@ services:
     depends_on:
       - web
 
+  celery:
+    image: ideniska/passport_ai
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A core worker -l info
+    entrypoint: ""
+    restart: always
+    volumes:
+      - media_data:/app/media
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+
+  # rabbitmq:
+  #   image: rabbitmq:alpine
+  #   volumes:
+  #     - rabbitmq:/var/lib/rabbitmq
+  #   restart: always
+  #   healthcheck:
+  #     test: rabbitmq-diagnostics -q status
+  #     interval: 10s
+  #     timeout: 30s
+  #     retries: 3
+
+  redis:
+    image: redis:7.0.8-alpine
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1m20s
+      timeout: 5s
+      retries: 3
+
 volumes:
   passport_ai_postgres_data:
   static_data:
   media_data:
-
-networks:
-  queue_network:
-    driver: bridge
+  rabbitmq:

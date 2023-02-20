@@ -36,3 +36,5 @@ class UserFile(models.Model):
     edited = models.BooleanField(default=False)
     prepared_for = models.CharField(choices=DOCUMENT_TYPE_CHOICES, max_length=50)
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    watermarked = models.BooleanField(default=True)
+    paid = models.BooleanField(default=False)
