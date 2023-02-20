@@ -1,4 +1,13 @@
-const wsSchema = window.location.protocol == 'https' ? 'wss' : 'ws'
+// const wsSchema = window.location.protocol == 'https' ? 'wss' : 'ws'
+
+var loc = window.location,
+    wsSchema;
+if (loc.protocol === "https:") {
+    wsSchema = "wss:";
+} else {
+    wsSchema = "ws:";
+}
+
 const currentDomain = window.location.host
 const websocket = new WebSocket(`${wsSchema}://${currentDomain}/ws/progress/`)
 
