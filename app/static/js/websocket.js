@@ -10,7 +10,7 @@
 
 // const currentDomain = window.location.host
 
-var websocket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
+var websocket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws/progress/");
 
 // const websocket = new WebSocket(`${wsSchema}://${currentDomain}/ws/progress/`)
 
