@@ -1,15 +1,19 @@
 // const wsSchema = window.location.protocol == 'https' ? 'wss' : 'ws'
 
-var loc = window.location,
-    wsSchema;
-if (loc.protocol === "https:") {
-    wsSchema = "wss:";
-} else {
-    wsSchema = "ws:";
-}
+// var loc = window.location,
+//     wsSchema;
+// if (loc.protocol === "https:") {
+//     wsSchema = "wss:";
+// } else {
+//     wsSchema = "ws:";
+// }
 
-const currentDomain = window.location.host
-const websocket = new WebSocket(`${wsSchema}://${currentDomain}/ws/progress/`)
+// const currentDomain = window.location.host
+
+var websocket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
+
+// const websocket = new WebSocket(`${wsSchema}://${currentDomain}/ws/progress/`)
+
 
 websocket.onclose = OnClose
 websocket.onmessage = ReceiveMessage
