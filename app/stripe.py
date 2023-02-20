@@ -18,6 +18,7 @@ def calculate_order_amount(items):
 class StripeCreatePayment:
     def create_payment(self, request):
         data = request.data
+        print(f"{data=}")
         intent = stripe.PaymentIntent.create(
             amount=calculate_order_amount(data["items"]),
             currency="cad",
