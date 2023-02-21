@@ -27,6 +27,7 @@ class StripeCreatePayment:
             },
         )
         return intent
+        # comment
 
 
 class CreateCheckoutSessionService:
