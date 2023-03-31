@@ -61,7 +61,6 @@ class PrepareBackend(View):
             .filter(edited=False)
             .values_list("id", flat=True)
         )
-        print(uploaded_files)
         task = process_photos.delay(session_key, uploaded_files)
 
         # user_files = UserFile.objects.filter(id__in=uploaded_files)

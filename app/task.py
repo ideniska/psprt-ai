@@ -1,4 +1,4 @@
-from app.service import PhotoPreparation
+from app.service_v2 import PhotoPreparation
 from core.celery import app
 from channels.layers import get_channel_layer
 import asyncio
@@ -24,12 +24,10 @@ def process_photos(session_key, uploaded_files):
     for file in user_files:
         photo_size = file.prepared_for
         file_path = file.file.path
-        file_name = file.file.name
         file_id = file.id
     service = PhotoPreparation(
         photo_size,
         file_path,
-        file_name,
         session_key,
         file_id,
     )

@@ -152,7 +152,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_HOSTS = [
     "http://localhost",
-    "http://localhost:8000",
+    "http://localhost:9000",
     "http://127.0.0.1:8000",
     "http://127.0.0.1",
     "https://getvisa.photos",
@@ -162,7 +162,7 @@ CORS_ALLOWED_HOSTS = [
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "https://getvisa.photos",
-    "http://localhost:8000",
+    "http://localhost:9000",
 ]
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
