@@ -6,6 +6,7 @@ from django.http import JsonResponse
 ###------------------------------- STRIPE -------------------------------###
 stripe.api_key = settings.STRIPE_SECRET_KEY
 YOUR_DOMAIN = settings.YOUR_DOMAIN
+print(YOUR_DOMAIN)
 
 
 def calculate_order_amount(items):
