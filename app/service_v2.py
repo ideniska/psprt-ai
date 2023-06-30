@@ -9,6 +9,8 @@ import cv2
 import os
 from pathlib import Path
 from django.conf import settings
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 class PhotoPreparation:
@@ -71,10 +73,33 @@ class PhotoPreparation:
         )
 
     def make(self):
+        # channel_layer = get_channel_layer()
+        # async_to_sync(channel_layer.group_send)(
+        #     self.session_key,
+        #     {
+        #         "type": "celery_task_update",
+        #         "data": {
+        #             "progress": 0.2,
+        #             "event": "make_started",
+        #         },
+        #     },
+        # )
         image = cv2.imread(self.input_path)
 
         # Detect face
         face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml.txt")
+
+        # async_to_sync(channel_layer.group_send)(
+        #     self.session_key,
+        #     {
+        #         "type": "celery_task_update",
+        #         "data": {
+        #             "progress": 0.3,
+        #             "event": "face_detected",
+        #         },
+        #     },
+        # )
+
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
         (face_x, face_y, face_width, face_height) = faces[0]
@@ -87,51 +112,115 @@ class PhotoPreparation:
         percentage = face_height / total_height
 
         # Crop area above face and below face
-        cropped_image = image[0 + face_y - int(face_y * 0.55):total_height - int(face_height * 0.6),
-                        0:total_width]  # Slicing to crop the image
+        cropped_image = image[
+            0 + face_y - int(face_y * 0.55) : total_height - int(face_height * 0.6),
+            0:total_width,
+        ]  # Slicing to crop the image
 
         # Crop image for input size
-        cropped_image_height = cropped_image.shape[0]  # get image height (number of rows)
-        cropped_image_width = cropped_image.shape[1]  # get image width (number of columns)
-        aspect = cropped_image_width / cropped_image_height  # compute aspect ratio (width / height)
+        cropped_image_height = cropped_image.shape[
+            0
+        ]  # get image height (number of rows)
+        cropped_image_width = cropped_image.shape[
+            1
+        ]  # get image width (number of columns)
+        aspect = (
+            cropped_image_width / cropped_image_height
+        )  # compute aspect ratio (width / height)
         ideal_width = self.photo_size[0]
         ideal_height = self.photo_size[1]
         ideal_aspect = ideal_width / ideal_height  # set ideal aspect ratio
 
         if aspect > ideal_aspect:
             # Then crop the left and right edges:
-            new_width = int(ideal_aspect * cropped_image_height)  # compute new width to keep ideal aspect ratio
-            print(f'{new_width=}, {cropped_image_width=}')
-            if 0 < new_width < cropped_image_width:  # check new width within image bounds
-                offset = (cropped_image_width - new_width) / 2  # compute horizontal offset to center crop
-                crop_params = [offset, 0, cropped_image_width - offset, cropped_image_height]  # set crop region
+            new_width = int(
+                ideal_aspect * cropped_image_height
+            )  # compute new width to keep ideal aspect ratio
+            print(f"{new_width=}, {cropped_image_width=}")
+            if (
+                0 < new_width < cropped_image_width
+            ):  # check new width within image bounds
+                offset = (
+                    cropped_image_width - new_width
+                ) / 2  # compute horizontal offset to center crop
+                crop_params = [
+                    offset,
+                    0,
+                    cropped_image_width - offset,
+                    cropped_image_height,
+                ]  # set crop region
             else:
-                crop_params = [0, 0, cropped_image_width, cropped_image_height]  # fall back to full image
+                crop_params = [
+                    0,
+                    0,
+                    cropped_image_width,
+                    cropped_image_height,
+                ]  # fall back to full image
         else:
             # ... crop the top and bottom:
-            new_height = int(cropped_image_width / ideal_aspect)  # compute new height to keep ideal aspect ratio
-            print(f'{new_height=}, {cropped_image_height=}')
-            if 0 < new_height < cropped_image_height:  # check new height within image bounds
-                offset = (cropped_image_height - new_height) / 2  # compute vertical offset to center crop
-                crop_params = [0, offset, cropped_image_width, cropped_image_height - offset]  # set crop region
+            new_height = int(
+                cropped_image_width / ideal_aspect
+            )  # compute new height to keep ideal aspect ratio
+            print(f"{new_height=}, {cropped_image_height=}")
+            if (
+                0 < new_height < cropped_image_height
+            ):  # check new height within image bounds
+                offset = (
+                    cropped_image_height - new_height
+                ) / 2  # compute vertical offset to center crop
+                crop_params = [
+                    0,
+                    offset,
+                    cropped_image_width,
+                    cropped_image_height - offset,
+                ]  # set crop region
             else:
-                crop_params = [0, 0, cropped_image_width, cropped_image_height]  # fall back to full image
+                crop_params = [
+                    0,
+                    0,
+                    cropped_image_width,
+                    cropped_image_height,
+                ]  # fall back to full image
 
         # Crop for document size
-        if all(x >= 0 for x in crop_params) and crop_params[3] > crop_params[1] and crop_params[2] > crop_params[0]:
+        if (
+            all(x >= 0 for x in crop_params)
+            and crop_params[3] > crop_params[1]
+            and crop_params[2] > crop_params[0]
+        ):
             # check crop region is valid (non-negative dimensions, positive width and height)
-            cropped_image_after_size_crop = cropped_image[int(crop_params[1]):int(crop_params[3]),
-                                            int(crop_params[0]):int(crop_params[2])]  # crop the image
-            cv2.imwrite('/Users/denissakhno/Programming/Projects/psprt-ai/media/edited/doc_size_cropped.jpg',
-                        cropped_image_after_size_crop)
+            cropped_image_after_size_crop = cropped_image[
+                int(crop_params[1]) : int(crop_params[3]),
+                int(crop_params[0]) : int(crop_params[2]),
+            ]  # crop the image
+            cv2.imwrite(
+                "/Users/denissakhno/Programming/Projects/psprt-ai/media/edited/doc_size_cropped.jpg",
+                cropped_image_after_size_crop,
+            )
         else:
             print("Invalid crop dimensions:", crop_params)  # log error if crop failed
 
-        resized_image = cv2.resize(cropped_image_after_size_crop, (ideal_width, ideal_height),
-                                   interpolation=cv2.INTER_AREA)
+        # async_to_sync(channel_layer.group_send)(
+        #     self.session_key,
+        #     {
+        #         "type": "celery_task_update",
+        #         "data": {
+        #             "progress": 0.4,
+        #             "event": "cropped_image_after_size_crop",
+        #         },
+        #     },
+        # )
+
+        resized_image = cv2.resize(
+            cropped_image_after_size_crop,
+            (ideal_width, ideal_height),
+            interpolation=cv2.INTER_AREA,
+        )
 
         # Remove bg and past it into new image with white bg
-        resized_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2RGB)  # convert color from opencv to pillow
+        resized_image = cv2.cvtColor(
+            resized_image, cv2.COLOR_BGR2RGB
+        )  # convert color from opencv to pillow
         pillow_image = Image.fromarray(resized_image)
 
         output = remove(pillow_image, alpha_matting=False)
@@ -140,6 +229,17 @@ class PhotoPreparation:
         )
         on_white_background.paste(output, output)
         on_white_background.save(self.clean_output_path)
+
+        # async_to_sync(channel_layer.group_send)(
+        #     self.session_key,
+        #     {
+        #         "type": "celery_task_update",
+        #         "data": {
+        #             "progress": 0.5,
+        #             "event": "before watermarks image saved",
+        #         },
+        #     },
+        # )
 
         ### Watermaked version ###
         watermark_image = on_white_background.copy()
@@ -168,6 +268,17 @@ class PhotoPreparation:
             (x, y * 1.5), "getvisa.photo", fill=(128, 128, 128), font=font, anchor="ms"
         )
         watermark_image.save(self.watermarked_output_path)
+
+        # async_to_sync(channel_layer.group_send)(
+        #     self.session_key,
+        #     {
+        #         "type": "celery_task_update",
+        #         "data": {
+        #             "progress": 0.6,
+        #             "event": "watermarked image saved",
+        #         },
+        #     },
+        # )
 
         # Add watermarked image to UserFile model
         watermarked_file_name = os.path.basename(self.watermarked_output_path)
@@ -198,5 +309,3 @@ class PhotoPreparation:
             watermarked=False,
         )
         new_clean_file_object.save()
-
-

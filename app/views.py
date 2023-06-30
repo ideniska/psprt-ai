@@ -30,7 +30,8 @@ class UploadView(FormView):
     success_url = "/choose/"
 
     def form_valid(self, form):
-        self.request.session.save()
+        if self.request.session.modified:
+            self.request.session.save()
         session_key = self.request.session.session_key
 
         # Delete old files assosiated with this session
@@ -93,7 +94,14 @@ class ChooseView(View):
         uploaded_files = UserFile.objects.filter(session=session_key).filter(
             edited=False
         )
-        context = {"form": form, "uploaded_files": uploaded_files}
+        number_of_placeholders = 3 - len(
+            uploaded_files
+        )  # to display empty placeholders when user upload less than 3 photos
+        context = {
+            "form": form,
+            "uploaded_files": uploaded_files,
+            "number_of_placeholders": number_of_placeholders,
+        }
         return render(request, self.template_name, context)
 
     # def post(self, request):

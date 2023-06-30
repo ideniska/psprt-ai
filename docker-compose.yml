@@ -22,17 +22,17 @@ services:
     env_file:
       - ./.env.dev
 
-  nginx:
-    image: nginx:1.19.8-alpine
-    restart: always
-    ports:
-      - 9000:80
-    volumes:
-      - static_data:/static
-      - media_data:/media
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - web
+  # nginx:
+  #   image: nginx:1.19.8-alpine
+  #   restart: always
+  #   ports:
+  #     - 9000:80
+  #   volumes:
+  #     - static_data:/static
+  #     - media_data:/media
+  #     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #   depends_on:
+  #     - web
 
   celery:
     image: ideniska/passport_ai

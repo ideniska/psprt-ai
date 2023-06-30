@@ -2,79 +2,83 @@
 <div id="loading" style="display: none">
   <img src="{% static 'img/loading.gif' %}" alt="Loading..." />
 </div>
-<div class="container mt-5">
-  <h1>Step 2 of 2: Choose document type</h1>
-  <div class="row mt-5">
-    {% if uploaded_files|length > 2 %}
-    <div class="col-md-5">
-      <div class="row">
-        {% for file in uploaded_files%}
+<div class="container main">
+  <h1>Step 2 of 2: Choose the document type</h1>
+  {% if uploaded_files|length == 3 %}
+  <div>
+    {% for file in uploaded_files%}
 
-        <figure class="figure" style="max-width: 150px">
-          <img
-            src="{{ file.file.url }}"
-            class="img-fluid rounded"
-            alt="..."
-            width="150"
-          />
-        </figure>
+    <figure class="figure" style="padding-top: 32px; margin-right: 15px">
+      <img
+        src="{{ file.file.url }}"
+        class="img-fluid rounded"
+        alt="..."
+        width="150"
+      />
+    </figure>
 
-        {% endfor%}
-      </div>
-      <div class="row">
-        <a
-          href="{% url 'upload' %}"
-          class="btn btn-warning"
-          style="max-width: 300px"
-          >Choose different photos</a
-        >
-      </div>
-      <br />
-    </div>
-    {% else %}
-    <div class="col-md-4">
-      <div class="row">
-        {% for file in uploaded_files%}
-
-        <figure class="figure" style="max-width: 150px">
-          <img
-            src="{{ file.file.url }}"
-            class="img-fluid rounded"
-            alt="..."
-            width="150"
-          />
-        </figure>
-
-        {% endfor%}
-      </div>
-      <div class="row">
-        <a
-          href="{% url 'upload' %}"
-          class="btn btn-warning"
-          style="max-width: 300px"
-          >Choose different photos</a
-        >
-      </div>
-      <br />
-    </div>
-    {% endif %}
-    <div class="col-md-5">
-      <div class="container">
-        <form id="document-type-form">
-          {% csrf_token %} {{ form.as_p }}
-
-          <button type="submit" id="submit-button" class="btn btn-primary">
-            Prepare photo
-          </button>
-        </form>
-        <div id="loading-animation" style="display: none">
-          <img src="{% static 'img/loading.gif' %}" alt="Loading..." />
-        </div>
-      </div>
-    </div>
+    {% endfor%}
   </div>
+  <a href="{% url 'upload' %}" class="btn btn-warning" style="max-width: 300px; margin-bottom: 32px"
+    >Upload new photos</a
+  >
+  <br />
+  {% else %}
+  <div>
+    {% for file in uploaded_files%}
+
+    <figure class="figure" style="max-width: 150px;padding-top: 32px; margin-right: 15px">
+      <img
+        src="{{ file.file.url }}"
+        class="img-fluid rounded"
+        alt="..."
+        width="150"
+      />
+    </figure>
+
+    {% endfor%}
+    {% with ''|center:number_of_placeholders as range  %}
+    {% for placeholder in range%}
+    <figure class="figure" style="max-width: 150px; margin-right: 15px">
+      <img
+        src="{% static "img/img_placeholder.png" %}"
+        class="img-fluid rounded"
+        alt="..."
+        width="150"
+      />
+    </figure>
+    {% endfor%}
+    {% endwith %}
+    <br />
+  </div>
+  <a
+  href="{% url 'upload' %}"
+  class="btn btn-warning"
+  style="max-width: 300px;  margin-bottom: 32px"
+  >Upload new photos</a
+>
+  {% endif %}
+  <form id="document-type-form">
+    {% csrf_token %} {{ form.as_p }}
+
+    <button
+      type="submit"
+      id="submit-button"
+      class="btn btn-primary"
+      style="width: 78%"
+    >
+      Prepare photo
+    </button>
+  </form>
+  <div id="loading-animation" style="display: none">
+    <img src="{% static 'img/loading.gif' %}" alt="Loading..." />
+  </div>
+</div>
+
+
   <br />
   <br />
+  {% comment %}
   <div
     class="progress"
     role="progressbar"
@@ -90,8 +94,7 @@
     ></div>
   </div>
 </div>
-
-{% comment %}
+{% endcomment %} {% comment %}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     var taskId = "{{ task_id }}";

@@ -1,0 +1,113 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div id="loading" style="display: none">
+  <img src="{% static 'img/loading.gif' %}" alt="Loading..." />
+</div>
+<div class="container mt-5">
+  <h1>Step 2 of 2: Choose document type</h1>
+  <div class="row mt-5">
+    {% if uploaded_files|length > 2 %}
+    <div class="col-md-5">
+      <div class="row">
+        {% for file in uploaded_files%}
+
+        <figure class="figure" style="max-width: 150px">
+          <img
+            src="{{ file.file.url }}"
+            class="img-fluid rounded"
+            alt="..."
+            width="150"
+          />
+        </figure>
+
+        {% endfor%}
+      </div>
+      <div class="row">
+        <a
+          href="{% url 'upload' %}"
+          class="btn btn-warning"
+          style="max-width: 300px"
+          >Choose different photos</a
+        >
+      </div>
+      <br />
+    </div>
+    {% else %}
+    <div class="col-md-4">
+      <div class="row">
+        {% for file in uploaded_files%}
+
+        <figure class="figure" style="max-width: 150px">
+          <img
+            src="{{ file.file.url }}"
+            class="img-fluid rounded"
+            alt="..."
+            width="150"
+          />
+        </figure>
+
+        {% endfor%}
+      </div>
+      <div class="row">
+        <a
+          href="{% url 'upload' %}"
+          class="btn btn-warning"
+          style="max-width: 300px"
+          >Choose different photos</a
+        >
+      </div>
+      <br />
+    </div>
+    {% endif %}
+    <div class="col-md-5">
+      <div class="container">
+        <form id="document-type-form">
+          {% csrf_token %} {{ form.as_p }}
+
+          <button type="submit" id="submit-button" class="btn btn-primary">
+            Prepare photo
+          </button>
+        </form>
+        <div id="loading-animation" style="display: none">
+          <img src="{% static 'img/loading.gif' %}" alt="Loading..." />
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+  <br />
+  <div
+    class="progress"
+    role="progressbar"
+    aria-label="Animated striped example"
+    aria-valuenow="75"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    style="max-width: 780px"
+  >
+    <div
+      class="progress-bar progress-bar-striped progress-bar-animated"
+      style="width: 50%"
+    ></div>
+  </div>
+</div>
+
+{% comment %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var taskId = "{{ task_id }}";
+    if (taskId) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/celery-progress/" + taskId + "/");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          window.location.href = "/prepare";
+        }
+      };
+      xhr.send();
+    }
+  });
+</script>
+{% endcomment %}
+
+<script src="{% static 'js/websocket.js' %}"></script>
+{% endblock %}

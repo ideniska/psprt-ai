@@ -38,7 +38,7 @@ def process_photos(session_key, uploaded_files):
         {
             "type": "celery_task_update",
             "data": {
-                "progress": 0.2,
+                "progress": 0.8,
                 "event": "finished",
             },
         },

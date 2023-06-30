@@ -4,13 +4,18 @@
 <html lang="en">
   <head>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4MSVTFBNZ"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-B4MSVTFBNZ"
+    ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-      gtag('config', 'G-B4MSVTFBNZ');
+      gtag("config", "G-B4MSVTFBNZ");
     </script>
 
     <meta property="og:url" content="http://getvisa.photos" />
@@ -40,6 +45,7 @@
     />
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 
     {% block header %}{% endblock %}
     <title>Passport Photo AI</title>
